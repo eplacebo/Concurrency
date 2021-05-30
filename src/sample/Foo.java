@@ -4,37 +4,36 @@ public class Foo {
 
     public int flag = 0;
 
-    synchronized public void first(Thread threadA) throws InterruptedException {
-        while (flag == 0) {
-            threadA.start();
-            flag++;
-            notifyAll();
-        }
+    public Foo() {
+        flag = 0;
+    }
 
-        wait();
+    synchronized void first(Thread threadA) throws InterruptedException {
+        while (flag != 0) {
+            wait();
+        }
+        threadA.start();
+        flag++;
+        notifyAll();
+
 
     }
 
-    synchronized public void second(Thread threadB) throws InterruptedException {
-        while (flag == 1) {
-            threadB.start();
-            flag++;
-            notifyAll();
+    synchronized void second(Thread threadB) throws InterruptedException {
+        while (flag != 1) {
+            wait();
         }
-
-        wait();
+        threadB.start();
+        flag++;
+        notifyAll();
     }
 
-    synchronized public void third(Thread threadC) throws InterruptedException {
-        while (flag == 2) {
-            threadC.start();
-            flag++;
-            notifyAll();
+    synchronized void third(Thread threadC) throws InterruptedException {
+        while (flag != 2) {
+            wait();
         }
-
-        wait();
+        threadC.start();
+        flag++;
+        notifyAll();
     }
 }
-
-
-
