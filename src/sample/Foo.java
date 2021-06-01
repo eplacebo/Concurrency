@@ -1,39 +1,26 @@
 package sample;
 
+import java.util.concurrent.Semaphore;
+
 public class Foo {
 
-    public int flag = 0;
+        Semaphore semaphore = new Semaphore(0);
+        Semaphore semaphore2 = new Semaphore(0);
 
-    public Foo() {
-        flag = 0;
+    public void first(Runnable printFirst) throws InterruptedException {
+        printFirst.run();
+        semaphore.release();
     }
 
-    synchronized void first(Thread threadA) throws InterruptedException {
-        while (flag != 0) {
-            wait();
-        }
-        threadA.start();
-        flag++;
-        notifyAll();
-
-
+    public void second(Runnable printSecond) throws InterruptedException {
+        semaphore.acquire();
+        printSecond.run();
+        semaphore2.release();
     }
 
-    synchronized void second(Thread threadB) throws InterruptedException {
-        while (flag != 1) {
-            wait();
-        }
-        threadB.start();
-        flag++;
-        notifyAll();
-    }
-
-    synchronized void third(Thread threadC) throws InterruptedException {
-        while (flag != 2) {
-            wait();
-        }
-        threadC.start();
-        flag++;
-        notifyAll();
+    public void third(Runnable printThird) throws InterruptedException {
+        semaphore2.acquire();
+        printThird.run();
+        semaphore2.release();
     }
 }
